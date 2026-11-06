@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zombie Shooter - Tải Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #050210;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Hiệu ứng nền Thiên Hà */
+        #galaxy-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Khung giao diện chính */
+        .card {
+            position: relative;
+            z-index: 2;
+            background: rgba(20, 10, 35, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 40px 30px;
+            width: 90%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.3),
+                        0 0 80px rgba(0, 212, 255, 0.15);
+        }
+
+        /* Icon Game */
+        .game-icon {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 20px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #ff2a5f, #7f00ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(255, 42, 95, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-icon svg {
+            width: 65px;
+            height: 65px;
+            fill: #fff;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        /* Tên Game */
+        .game-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #00d4ff, #8a2be2, #ff007f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .game-subtitle {
+            font-size: 0.9rem;
+            color: #b3b3cc;
+            margin-bottom: 30px;
+        }
+
+        /* Nút Tải */
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            background: linear-gradient(90deg, #8a2be2, #00d4ff);
+            background-size: 200% auto;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-download:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 28px rgba(138, 43, 226, 0.6);
+        }
+
+        .btn-download:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-download svg {
+            width: 22px;
+            height: 22px;
+            fill: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nền Galaxy Canvas -->
+    <canvas id="galaxy-canvas"></canvas>
+
+    <!-- Giao diện chính -->
+    <div class="card">
+        <!-- Icon Zombie -->
+        <div class="game-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2A9 9 0 0 0 3 11C3 14.5 5 17.5 8 19V22H10V20H14V22H16V19C19 17.5 21 14.5 21 11A9 9 0 0 0 12 2M8.5 8A1.5 1.5 0 1 1 7 9.5 A1.5 1.5 0 0 1 8.5 8M15.5 8A1.5 1.5 0 1 1 14 9.5 A1.5 1.5 0 0 1 15.5 8M12 14C9.3 14 8 16 8 16H16S14.7 14 12 14Z"/>
+            </svg>
+        </div>
+
+        <!-- Tên Game -->
+        <h1 class="game-title">Zombie Shooter</h1>
+        <p class="game-subtitle">Phiên bản APK Android</p>
+
+        <!-- Nút Tải -->
+        <a href="https://archive.org/download/zombie_shooter_202610/zombie_shooter.apk" class="btn-download">
+            <svg viewBox="0 0 24 24">
+                <path d="M5 20H19V18H5M19 9H15V3H9V9H5L12 16L19 9Z"/>
+            </svg>
+            Tải XUỐNG APK
+        </a>
+    </div>
+
+    <!-- Script tạo hiệu ứng Galaxy -->
+    <script>
+        const canvas = document.getElementById('galaxy-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let stars = [];
+        const numStars = 180;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Star {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = (Math.random() - 0.5) * canvas.width * 2;
+                this.y = (Math.random() - 0.5) * canvas.height * 2;
+                this.z = Math.random() * canvas.width;
+                this.size = Math.random() * 1.8 + 0.5;
+                this.color = ['#ffffff', '#00d4ff', '#8a2be2', '#ff007f'][Math.floor(Math.random() * 4)];
+            }
+
+            update() {
+                this.z -= 0.6;
+                if (this.z <= 0) {
+                    this.reset();
+                    this.z = canvas.width;
+                }
+            }
+
+            draw() {
+                const k = 128 / this.z;
+                const px = this.x * k + canvas.width / 2;
+                const py = this.y * k + canvas.height / 2;
+
+                if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+                    const size = (1 - this.z / canvas.width) * this.size * 2.5;
+                    ctx.beginPath();
+                    ctx.arc(px, py, Math.max(size, 0.5), 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                }
+            }
+        }
+
+        for (let i = 0; i < numStars; i++) {
+            stars.push(new Star());
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(5, 2, 16, 0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
